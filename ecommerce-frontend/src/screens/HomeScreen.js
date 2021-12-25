@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import Product from "../components/Product";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import { listProducts } from "../actions/productActions";
 
 const H1 = styled.h1`
   color: #657ed4;
@@ -16,35 +18,34 @@ const H1 = styled.h1`
 `;
 
 export const HomeScreen = () => {
-  const [products, setProducts] = useState([]);
+  const dispatch = useDispatch()
+  const productList = useSelector(state => state.productList)
+  const {error,loading, products} = productList
   const [isLoading, setIsLopading] = useState(true);
 
   //Komponent został zamontowany - wykona sę raz
   useEffect(() => {
     console.log("use effect trigger");
+    dispatch(listProducts())
 
-    async function fetchProducts() {
-      const { data } = await axios.get("/api/products/");
-      await setIsLopading(false);
-      await setProducts(data);
-    }
-
-    fetchProducts();
 
     // url naszego backendu w Django
-  }, []);
-
+  }, [dispatch]);
   return (
     <>
-      <Row>
+      
         <H1>Najnowsze produkty:</H1>
-        {isLoading && <h1>Ładowanie...</h1>}
-        {products.map((product) => (
+        {loading ? <h1>Ładowanie...</h1> : error ? <h3>{error}</h3>
+        : 
+        <Row>
+          {products.map((product) => (
           <Col sm={12} md={6} lg={4} xl={3} key={product._id}>
             <Product product={product} />
           </Col>
         ))}
       </Row>
+      }
+        
     </>
   );
 };

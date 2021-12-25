@@ -10,7 +10,9 @@ import {
 } from "react-bootstrap";
 import Rating from "../components/Rating";
 import styled from "styled-components";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { listProductDetails } from "../actions/productActions";
+// import axios from "axios";
 
 const Button = styled.button`
   padding: 5px 15px;
@@ -32,25 +34,20 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
 `;
+function ProductScreen ({ match }) {
+  // const [product, setProduct] = useState([]);
+  const dispatch = useDispatch()
+  const productDetails = useSelector(state => state.productDetails)
+  const {loading,error,product} = productDetails
 
-const ProductScreen = ({ match }) => {
-  const [product, setProduct] = useState([]);
-
+  // const dispatch = useDispatch()
   //Komponent został zamontowany - wykona sę raz
   useEffect(() => {
-    console.log("use effect trigger");
-
-    async function fetchProducts() {
-      const { data } = await axios.get(`/api/products/${match.params.id}`);
-      setProduct(data);
-    }
-
-    fetchProducts();
-
-    // url naszego backendu w Django
-  }, []);
+    dispatch(listProductDetails(match.params.id))    
+  }, [])
+  // let product = {}
   return (
-    <>
+    <div>
       <Link to="/" className="btn my-2" style={{ color: "#657ed4" }}>
         Cofnij
       </Link>
@@ -115,7 +112,7 @@ const ProductScreen = ({ match }) => {
           </Card>
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 
