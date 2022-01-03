@@ -30,7 +30,7 @@ const Header = () => {
               <LinkContainer to='/products'>
                 <Nav.Link className='py-3'>
                   <FontAwesomeIcon icon={faShoppingCart} />
-                  Karta
+                  Koszyk
                 </Nav.Link>
               </LinkContainer>
               {/* <LinkContainer to='/code'>

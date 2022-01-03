@@ -10,20 +10,20 @@ import {
 } from "react-bootstrap";
 import Rating from "../components/Rating";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { listProductDetails } from "../actions/productActions";
-// import axios from "axios";
+import {useDispatch, useSelector} from 'react-redux'
+import { listProductDetails } from "../actions/productActions"
+import Loader from "../components/Loader";
+import Message from "../components/Message";
+
 
 const Button = styled.button`
   padding: 5px 15px;
   background-color: ${({ disabled }) => (disabled ? "#333" : "#657ed4")};
-
   text-transform: uppercase;
   border: none;
   border-radius: 5px;
   color: white;
   width: 120px;
-
   :hover {
     background-color: ${({ disabled }) => (disabled ? "#555" : "#768fe5")};
   }
@@ -34,24 +34,27 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
 `;
-function ProductScreen ({ match }) {
-  // const [product, setProduct] = useState([]);
+
+const ProductScreen = ({ match }) => {
   const dispatch = useDispatch()
   const productDetails = useSelector(state => state.productDetails)
-  const {loading,error,product} = productDetails
-
-  // const dispatch = useDispatch()
-  //Komponent został zamontowany - wykona sę raz
+  const {loading, error, product} = productDetails
   useEffect(() => {
-    dispatch(listProductDetails(match.params.id))    
-  }, [])
-  // let product = {}
+    dispatch(listProductDetails(match.params.id))
+  }, [dispatch, match])
+
   return (
-    <div>
+    <>
       <Link to="/" className="btn my-2" style={{ color: "#657ed4" }}>
         Cofnij
       </Link>
-      <Row>
+      {
+        loading?
+          <Loader/>
+          : error
+            ? <Message variant='danger'>{error}</Message>
+          :(
+            <Row>
         <Col lg="6" md="6" sm="1">
           <Image
             src={product.image}
@@ -105,14 +108,17 @@ function ProductScreen ({ match }) {
               </ListGroupItem>
               <ListGroup.Item>
                 <Wrapper>
-                  <Button disabled>Dodaj</Button>
+                  <Button className='btn-block' disabled={product.countInStock}>Dodaj</Button>
                 </Wrapper>
               </ListGroup.Item>
             </ListGroup>
           </Card>
         </Col>
       </Row>
-    </div>
+          )
+      }
+      
+    </>
   );
 };
 

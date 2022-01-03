@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import Product from "../components/Product";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -35,7 +37,7 @@ export const HomeScreen = () => {
     <>
       
         <H1>Najnowsze produkty:</H1>
-        {loading ? <h1>Ładowanie...</h1> : error ? <h3>{error}</h3>
+        {loading ? <Loader/> : error ? <Message variant='danger'>{error}</Message>
         : 
         <Row>
           {products.map((product) => (
