@@ -7,23 +7,24 @@ import {
   ListGroup,
   Card,
   ListGroupItem,
+  Form
 } from "react-bootstrap";
 import Rating from "../components/Rating";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { listProductDetails } from "../actions/productActions";
-// import axios from "axios";
+import {useDispatch, useSelector} from 'react-redux'
+import { listProductDetails } from "../actions/productActions"
+import Loader from "../components/Loader";
+import Message from "../components/Message";
+
 
 const Button = styled.button`
   padding: 5px 15px;
   background-color: ${({ disabled }) => (disabled ? "#333" : "#657ed4")};
-
   text-transform: uppercase;
   border: none;
   border-radius: 5px;
   color: white;
   width: 120px;
-
   :hover {
     background-color: ${({ disabled }) => (disabled ? "#555" : "#768fe5")};
   }
@@ -34,24 +35,32 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
 `;
-function ProductScreen ({ match }) {
-  // const [product, setProduct] = useState([]);
+
+function ProductScreen ({ match, history}) {
+  const [quantity, setQuantity] = useState(1)
   const dispatch = useDispatch()
   const productDetails = useSelector(state => state.productDetails)
-  const {loading,error,product} = productDetails
-
-  // const dispatch = useDispatch()
-  //Komponent został zamontowany - wykona sę raz
+  const {loading, error, product} = productDetails
   useEffect(() => {
-    dispatch(listProductDetails(match.params.id))    
-  }, [])
-  // let product = {}
+    dispatch(listProductDetails(match.params.id))
+  }, [dispatch, match])
+
+  const addToCartHandler = () =>{
+    history.push(`/cart/${match.params.id}?quantity=${quantity}`)
+  }
+
   return (
-    <div>
+    <>
       <Link to="/" className="btn my-2" style={{ color: "#657ed4" }}>
         Cofnij
       </Link>
-      <Row>
+      {
+        loading?
+          <Loader/>
+          : error
+            ? <Message variant='danger'>{error}</Message>
+          :(
+            <Row>
         <Col lg="6" md="6" sm="1">
           <Image
             src={product.image}
@@ -103,16 +112,48 @@ function ProductScreen ({ match }) {
                   </Col>
                 </Row>
               </ListGroupItem>
+
+              {product.countInStock > 0 && (
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Quantity</Col>
+                    <Col xs='auto' className="my-1">
+                      <Form.Control
+                      as="select"
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
+                      >
+                        {
+                          [...Array(product.countInStock).keys()].map((x)=>(
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ) )
+                        }
+
+                      </Form.Control>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              )}
               <ListGroup.Item>
                 <Wrapper>
-                  <Button disabled>Dodaj</Button>
+                  <Button
+                  onClick={addToCartHandler}
+                  className='btn-block' 
+                  disabled={product.countInStock === 0}
+                  >
+                    Dodaj</Button>
                 </Wrapper>
               </ListGroup.Item>
             </ListGroup>
           </Card>
         </Col>
       </Row>
-    </div>
+          )
+      }
+      
+    </>
   );
 };
 

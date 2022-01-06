@@ -27,10 +27,10 @@ const Header = () => {
                   Login
                 </Nav.Link>
               </LinkContainer>
-              <LinkContainer to='/products'>
+              <LinkContainer to='/cart'>
                 <Nav.Link className='py-3'>
                   <FontAwesomeIcon icon={faShoppingCart} />
-                  Karta
+                  Koszyk
                 </Nav.Link>
               </LinkContainer>
               {/* <LinkContainer to='/code'>
