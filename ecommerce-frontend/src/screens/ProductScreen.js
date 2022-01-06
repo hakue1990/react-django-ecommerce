@@ -7,6 +7,7 @@ import {
   ListGroup,
   Card,
   ListGroupItem,
+  Form
 } from "react-bootstrap";
 import Rating from "../components/Rating";
 import styled from "styled-components";
@@ -35,13 +36,18 @@ const Wrapper = styled.div`
   justify-content: center;
 `;
 
-const ProductScreen = ({ match }) => {
+function ProductScreen ({ match, history}) {
+  const [quantity, setQuantity] = useState(1)
   const dispatch = useDispatch()
   const productDetails = useSelector(state => state.productDetails)
   const {loading, error, product} = productDetails
   useEffect(() => {
     dispatch(listProductDetails(match.params.id))
   }, [dispatch, match])
+
+  const addToCartHandler = () =>{
+    history.push(`/cart/${match.params.id}?quantity=${quantity}`)
+  }
 
   return (
     <>
@@ -106,9 +112,38 @@ const ProductScreen = ({ match }) => {
                   </Col>
                 </Row>
               </ListGroupItem>
+
+              {product.countInStock > 0 && (
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Quantity</Col>
+                    <Col xs='auto' className="my-1">
+                      <Form.Control
+                      as="select"
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
+                      >
+                        {
+                          [...Array(product.countInStock).keys()].map((x)=>(
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ) )
+                        }
+
+                      </Form.Control>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              )}
               <ListGroup.Item>
                 <Wrapper>
-                  <Button className='btn-block' disabled={product.countInStock}>Dodaj</Button>
+                  <Button
+                  onClick={addToCartHandler}
+                  className='btn-block' 
+                  disabled={product.countInStock === 0}
+                  >
+                    Dodaj</Button>
                 </Wrapper>
               </ListGroup.Item>
             </ListGroup>
