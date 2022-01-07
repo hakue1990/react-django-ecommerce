@@ -37,7 +37,7 @@ const Product = ({ product }) => {
           </div>
         </Card.Text>
 
-        <Card.Text as='h3'>{Math.floor(product.price * 3.6)} PLN</Card.Text>
+        <Card.Text as='h3'>{Math.floor(product.price)} $</Card.Text>
       </Card.Body>
     </Card>
   );
