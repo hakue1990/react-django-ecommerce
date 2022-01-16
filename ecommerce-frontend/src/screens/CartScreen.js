@@ -59,7 +59,7 @@ function CartScreen({ match, history }) {
                   <Col>
                     <Link to={`/product/${item.product}`}>{item.name}</Link>
                   </Col>
-                  <Col md={2}>${item.price}</Col>
+                  <Col md={2}>{item.price} PLN</Col>
                   <Col md={3}>
                     <Form.Control
                       as='select'
@@ -101,10 +101,10 @@ function CartScreen({ match, history }) {
                 {cartItems.reduce((acc, item) => acc + item.quantity, 0)})
                 produktów
               </h2>
-              $
               {cartItems
                 .reduce((acc, item) => acc + item.quantity * item.price, 0)
                 .toFixed(2)}
+              PLN
             </ListGroup.Item>
           </ListGroup>
           <ListGroup>
